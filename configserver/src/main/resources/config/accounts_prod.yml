@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+
+build:
+  version: "1.0"
+
+accounts:
+  message: "Welcome to Bankwave accounts related PROD APIs "
+  contactDetails:
+    name: "Themba Tman - Developer"
+    email: "thembatman0@gmail.com"
+  onCallSupport:
+    - (011) 123-4567
+    - (011) 987-6543

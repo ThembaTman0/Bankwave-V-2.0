@@ -1,0 +1,34 @@
+server:
+  port: 9000
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: 'admin'
+    password: 'admin'
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  config:
+    import:
+      - "application_qa.yml"
+      - "application_prod.yml"
+  profiles:
+    active: "qa"
+
+build:
+  version: "3.0"
+
+cards:
+  message: "Welcome to Bankwave accounts related local APIs "
+  contactDetails:
+    name: "Themba Tman - Developer"
+    email: "thembatman0@gmail.com"
+  onCallSupport:
+    - (011) 123-4567
+    - (011) 987-6543
