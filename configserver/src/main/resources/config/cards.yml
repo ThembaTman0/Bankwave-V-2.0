@@ -1,13 +1,8 @@
-spring:
-  config:
-    activate:
-      on-profile: "prod"
-
 build:
-  version: "1.0"
+  version: "3.0"
 
-accounts:
-  message: "Welcome to Bankwave accounts related PROD APIs "
+cards:
+  message: "Welcome to Bankwave accounts related local APIs "
   contactDetails:
     name: "Themba Tman - Developer"
     email: "thembatman0@gmail.com"

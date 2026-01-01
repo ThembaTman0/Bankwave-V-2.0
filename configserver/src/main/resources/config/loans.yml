@@ -1,8 +1,8 @@
 build:
   version: "3.0"
 
-accounts:
-  message: "Welcome to Bankwave accounts related local APIs "
+loans:
+  message: "Welcome to Bankwave loans related local APIs "
   contactDetails:
     name: "Themba Tman - Developer"
     email: "thembatman0@gmail.com"

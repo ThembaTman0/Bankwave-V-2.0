@@ -1,8 +1,8 @@
 build:
-  version: "3.0"
+  version: "1.0"
 
 accounts:
-  message: "Welcome to Bankwave accounts related local APIs "
+  message: "Welcome to Bankwave accounts related PROD APIs "
   contactDetails:
     name: "Themba Tman - Developer"
     email: "thembatman0@gmail.com"
