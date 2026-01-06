@@ -7,5 +7,5 @@ loans:
     name: "Themba Tman - Developer"
     email: "thembatman0@gmail.com"
   onCallSupport:
-    - (011) 123-4567
-    - (011) 987-6543
+    - "(011) 123-4567"
+    - "(011) 987-6543"

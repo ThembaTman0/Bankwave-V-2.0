@@ -14,9 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,20 +30,20 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class AccountsController {
 
-    private IAccountsService iAccountsService;
+    private final IAccountsService iAccountsService;
+    private final Environment environment;
+    private final AccountsContactInfoDto accountsContactInfoDto;
 
-    public AccountsController(IAccountsService iAccountsService){
-        this.iAccountsService = iAccountsService;
-    }
-
-    @Value("${build.version}")
+    @Value("${build.version:1.0-local}")
     private String buildVersion;
 
-    @Autowired
-    private Environment environment;
-
-    @Autowired
-    private AccountsContactInfoDto accountsContactInfoDto;
+    public AccountsController(IAccountsService iAccountsService,
+                              Environment environment,
+                              AccountsContactInfoDto accountsContactInfoDto) {
+        this.iAccountsService = iAccountsService;
+        this.environment = environment;
+        this.accountsContactInfoDto = accountsContactInfoDto;
+    }
 
     // Swagger annotations for documenting the Create Account REST API
     @Operation(
@@ -249,5 +247,11 @@ public class AccountsController {
                 .status(HttpStatus.OK)
                 .body(accountsContactInfoDto);
     }
+
+    @GetMapping("/env-check")
+    public String envCheck() {
+        return environment.getProperty("accounts.message");
+    }
+
 
 }

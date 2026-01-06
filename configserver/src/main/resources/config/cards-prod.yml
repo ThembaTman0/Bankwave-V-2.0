@@ -1,11 +1,11 @@
 build:
-  version: "1.0"
+  version: "1.0-prod"
 
-accounts:
+cards:
   message: "Welcome to Bankwave cards related PROD APIs "
   contactDetails:
     name: "Themba Tman - Developer"
     email: "thembatman0@gmail.com"
   onCallSupport:
-    - (011) 123-4567
-    - (011) 987-6543
+    - "(011) 123-4567"
+    - "(011) 987-6543"

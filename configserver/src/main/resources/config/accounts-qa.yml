@@ -1,5 +1,5 @@
 build:
-  version: "2.0"
+  version: "1.0-QA"
 
 accounts:
   message: "Welcome to Bankwave accounts related QA APIs "

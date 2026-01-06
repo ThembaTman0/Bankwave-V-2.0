@@ -1,6 +1,11 @@
 server:
   port: 8090
+
 spring:
+  application:
+    name: "loans"
+  profiles:
+    active: "prod"
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -15,21 +20,5 @@ spring:
       ddl-auto: update
     show-sql: true
   config:
-    import:
-      - "application_qa.yml"
-      - "application_prod.yml"
-  profiles:
-    active:
-      - "qa"
+    import: "optional:configserver:http://localhost:8071/"
 
-build:
-  version: "3.0"
-
-loans:
-  message: "Welcome to Bankwave loans related local APIs "
-  contactDetails:
-    name: "Themba Tman - Developer"
-    email: "thembatman0@gmail.com"
-  onCallSupport:
-    - (011) 123-4567
-    - (011) 987-6543

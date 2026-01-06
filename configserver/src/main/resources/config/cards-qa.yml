@@ -1,11 +1,11 @@
 build:
-  version: "2.0"
+  version: "1.0-QA"
 
-accounts:
+cards:
   message: "Welcome to Bankwave cards related QA APIs "
   contactDetails:
     name: "John Doe - QA Developer"
     email: "johnDoe@mail.com"
   onCallSupport:
-    - (011) 123-4567
-    - (011) 987-6543
+    - "(011) 123-4567"
+    - "(011) 987-6543"
