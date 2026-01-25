@@ -1,6 +1,17 @@
 services:
+  configserver:
+    image: "thembatman/configserver:latest"
+    container_name: configserver-ms
+    ports:
+      - "8071:8071"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - bankwave
   accounts:
-    image: "thembatman/accounts:v1"
+    image: "thembatman/accounts:latest"
     container_name: accounts-ms
     ports:
       - "8080:8080"
