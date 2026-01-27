@@ -11,6 +11,8 @@ services:
       timeout: 5s
       retries: 10
       start_period: 15s
+    networks:
+      - bankwave
   configserver:
     image: "thembatman/configserver:latest"
     container_name: configserver-ms
