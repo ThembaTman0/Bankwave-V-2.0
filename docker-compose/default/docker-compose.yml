@@ -21,6 +21,10 @@ services:
           memory: 700m
     networks:
       - bankwave
+    environment:
+      SPRING_APPLICATION_NAME: "accounts"
+      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+      SPRING_PROFILE_ACTIVE: default
   loans:
     image: "thembatman/loans:latest"
     container_name: loans-ms
@@ -32,6 +36,10 @@ services:
           memory: 700m
     networks:
       - bankwave
+    environment:
+      SPRING_APPLICATION_NAME: "loans"
+      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+      SPRING_PROFILE_ACTIVE: default
   cards:
     image: "thembatman/cards:latest"
     container_name: cards-ms
@@ -43,6 +51,10 @@ services:
           memory: 700m
     networks:
       - bankwave
+    environment:
+      SPRING_APPLICATION_NAME: "cards"
+      SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+      SPRING_PROFILE_ACTIVE: default
 networks:
   bankwave:
     driver: "bridge"
