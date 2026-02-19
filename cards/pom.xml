@@ -136,18 +136,29 @@
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
-				<version>${jib.version}</version>
+				<version>3.4.0</version>
 				<configuration>
+
+					<!-- IMPORTANT: avoid Docker hang at 80% -->
+					<from>
+						<image>eclipse-temurin:21-jre</image>
+					</from>
+
 					<to>
-						<image>thembatman/cards</image>
+						<image>thembatman/accounts</image>
 						<tags>
 							<tag>latest</tag>
 							<tag>v1</tag>
 						</tags>
 					</to>
+
 					<container>
 						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+						<jvmFlags>
+							<jvmFlag>-XX:+UseContainerSupport</jvmFlag>
+						</jvmFlags>
 					</container>
+
 				</configuration>
 			</plugin>
 
