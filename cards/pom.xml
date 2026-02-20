@@ -145,10 +145,9 @@
 					</from>
 
 					<to>
-						<image>thembatman/accounts</image>
+						<image>thembatman/cards</image>
 						<tags>
 							<tag>latest</tag>
-							<tag>v1</tag>
 						</tags>
 					</to>
 
