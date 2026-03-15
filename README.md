@@ -1,63 +1,112 @@
 # Bankwave V2.0
 
-A microservices-based banking backend built with **Spring Boot** and **Spring Cloud Config**.
+Bankwave V2.0 is a microservices-based backend system built with **Spring Boot**, **Spring Cloud Config**, **MySQL**, and **Docker**.
 
-This project demonstrates how independent services can share centralized configuration while remaining loosely coupled and independently deployable.
-
----
-
-## Services
-
-| Service      | Description                      | Default Port |
-| ------------ | -------------------------------- | ------------ |
-| accounts     | Manages customer account data    | 8080         |
-| loans        | Manages loan information         | 8090         |
-| cards        | Manages card details             | 9000         |
-| configserver | Centralized configuration server | 8071         |
-
-Each service runs as a standalone Spring Boot application.
+The system demonstrates how multiple independent services can share centralized configuration while maintaining their own databases and deployment lifecycle.
 
 ---
 
-## Tech Stack
+# 10‑Second Architecture Overview
+
+```
+                +----------------------+
+                |    Config Server     |
+                |  (Spring Cloud)      |
+                +----------+-----------+
+                           |
+        ----------------------------------------------
+        |                     |                      |
++---------------+     +---------------+     +---------------+
+|   Accounts    |     |     Loans     |     |     Cards     |
+|  Microservice |     |  Microservice |     |  Microservice |
++-------+-------+     +-------+-------+     +-------+-------+
+        |                     |                      |
++---------------+     +---------------+     +---------------+
+|   AccountsDB  |     |    LoansDB    |     |    CardsDB    |
+|    (MySQL)    |     |    (MySQL)    |     |    (MySQL)    |
++---------------+     +---------------+     +---------------+
+
+         All services run in Docker containers
+```
+
+---
+
+# Services
+
+| Service      | Description                                | Port |
+| ------------ | ------------------------------------------ | ---- |
+| accounts     | Handles customer account data              | 8080 |
+| loans        | Handles loan related information           | 8090 |
+| cards        | Handles card related information           | 9000 |
+| configserver | Centralized configuration for all services | 8071 |
+
+Each service is an independent Spring Boot application.
+
+---
+
+# Technology Stack
 
 * Java
 * Spring Boot
 * Spring Cloud Config
 * Spring Data JPA
+* MySQL
 * Maven
 * Docker & Docker Compose
 
 ---
 
-## Architecture
+# Architecture Principles
 
-The system follows a microservices architecture where:
+The system follows common microservices practices:
 
-* Each service owns its own data
-* Services communicate through REST APIs
-* Configuration is centralized using Spring Cloud Config
-* Services remain independently deployable
-
-The **Config Server** provides configuration to all services during startup.
+* **Database per service** – each service owns its data
+* **Service isolation** – services are independently deployable
+* **Centralized configuration** – provided through Spring Cloud Config
+* **Containerized infrastructure** – managed with Docker Compose
 
 ---
 
-## Project Structure
+# Database Setup
 
-Each microservice follows a simple layered structure:
+Each microservice connects to its own MySQL container.
 
-* `controller` – REST endpoints
-* `service` – business logic
-* `repository` – data access layer
-* `entity` – database models
-* `dto` – API request and response objects
+| Service  | Database   |
+| -------- | ---------- |
+| Accounts | accountsdb |
+| Loans    | loansdb    |
+| Cards    | cardsdb    |
+
+Example datasource configuration:
+
+```
+SPRING_DATASOURCE_URL=jdbc:mysql://accountsdb:3306/accountsdb
+SPRING_DATASOURCE_USERNAME=root
+SPRING_DATASOURCE_PASSWORD=${MYSQL_ROOT_PASSWORD}
+```
+
+Health checks ensure that services only start after their database containers are ready.
 
 ---
 
-## Running the Project
+# Project Structure
 
-### 1. Clone the repository
+Each microservice follows a layered structure:
+
+```
+controller   → REST endpoints
+service      → business logic
+repository   → database access
+entity       → domain models
+dto          → request/response contracts
+exception    → centralized error handling
+```
+
+---
+
+# Running the Project
+
+## 1. Clone the repository
 
 ```
 git clone https://github.com/ThembaTman0/Bankwave-V-2.0.git
@@ -66,42 +115,32 @@ cd Bankwave-V-2.0
 
 ---
 
-### 2. Start the Config Server
+# Running Locally (Development)
 
-The configuration server must be started first.
+Start the Config Server first:
 
 ```
 cd configserver
 mvn spring-boot:run
 ```
 
-Verify the server is running:
+Then start the microservices in separate terminals.
 
-```
-http://localhost:8071
-```
-
----
-
-### 3. Start the Microservices
-
-Run each service in a separate terminal.
-
-Accounts service:
+Accounts:
 
 ```
 cd accounts
 mvn spring-boot:run
 ```
 
-Loans service:
+Loans:
 
 ```
 cd loans
 mvn spring-boot:run
 ```
 
-Cards service:
+Cards:
 
 ```
 cd cards
@@ -110,25 +149,39 @@ mvn spring-boot:run
 
 ---
 
-## Running with Docker (Optional)
+# Running the Full System with Docker
 
-From the root directory:
+Create a `.env` file in the root directory:
+
+```
+MYSQL_ROOT_PASSWORD=yourpassword
+```
+
+Start everything:
 
 ```
 docker-compose up --build
 ```
 
+Docker will start:
+
+* MySQL databases
+* All microservices
+* Shared network configuration
+
+Database data is stored in Docker volumes.
+
 ---
 
-## Testing APIs
+# Testing APIs
 
-You can test endpoints using:
+APIs can be tested using:
 
 * Postman
 * curl
-* Browser (for GET requests)
+* Browser (GET requests)
 
-Example:
+Example endpoint:
 
 ```
 http://localhost:8080/accounts
@@ -136,32 +189,30 @@ http://localhost:8080/accounts
 
 ---
 
-## Engineering Practices
+# Engineering Practices
 
-Some practices used while building this project:
+While building this project the focus was on keeping the code clear and maintainable. Some practices used include:
 
-* Centralized exception handling
-* DTO based API design
 * Layered architecture
+* DTO-based API contracts
+* Centralized exception handling
 * Externalized configuration
 * Service isolation
 * Meaningful logging
 
-The goal is to keep services simple, predictable, and easy to maintain.
-
 ---
 
-## Future Improvements
+# Future Improvements
 
-Possible next steps for the system:
+Possible next steps for the system include:
 
 * Service discovery
 * API gateway
 * Resilience patterns
-* Monitoring and observability
+* Observability and monitoring
 
 ---
 
-## Author
+# Author
 
-Built and maintained by Themba Ngobeni.
+Built and maintained by **Themba Ngobeni**.
