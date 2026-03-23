@@ -39,6 +39,7 @@ The system demonstrates how multiple independent services can share centralized 
 | loans        | Handles loan related information           | 8090 |
 | cards        | Handles card related information           | 9000 |
 | configserver | Centralized configuration for all services | 8071 |
+| eurekaserver | Service registry for discovery             | 8070 |
 
 Each service is an independent Spring Boot application.
 
@@ -49,6 +50,8 @@ Each service is an independent Spring Boot application.
 * Java
 * Spring Boot
 * Spring Cloud Config
+* Spring Cloud Netflix Eureka
+* Spring Cloud LoadBalancer
 * Spring Data JPA
 * MySQL
 * Maven
@@ -63,156 +66,69 @@ The system follows common microservices practices:
 * **Database per service** – each service owns its data
 * **Service isolation** – services are independently deployable
 * **Centralized configuration** – provided through Spring Cloud Config
+* **Service discovery** – services locate each other via Eureka
+* **Client-side load balancing** – handled by Spring Cloud LoadBalancer
 * **Containerized infrastructure** – managed with Docker Compose
 
 ---
 
-# Database Setup
+# Service Discovery & Registration
 
-Each microservice connects to its own MySQL container.
+In a microservices system, services run on dynamic IPs and ports — especially inside Docker. Hardcoding addresses is not an option. Service Discovery solves this by giving every service a way to find the others at runtime.
 
-| Service  | Database   |
-| -------- | ---------- |
-| Accounts | accountsdb |
-| Loans    | loansdb    |
-| Cards    | cardsdb    |
+Bankwave uses **Netflix Eureka** (via Spring Cloud) for this.
 
-Example datasource configuration:
+## How It Works
 
 ```
-SPRING_DATASOURCE_URL=jdbc:mysql://accountsdb:3306/accountsdb
-SPRING_DATASOURCE_USERNAME=root
-SPRING_DATASOURCE_PASSWORD=${MYSQL_ROOT_PASSWORD}
+  1. On startup, each service registers with Eureka:
+     "I am LOANS-SERVICE, running at 172.18.0.4:8090"
+
+  2. When Accounts needs to call Loans, it asks Eureka:
+     "Where is LOANS-SERVICE?"
+
+  3. Eureka returns the current address.
+
+  4. Spring Cloud LoadBalancer picks one instance
+     (Round Robin by default) and the call is made directly.
 ```
 
-Health checks ensure that services only start after their database containers are ready.
+```
++------------------+        (1) register         +-------------------+
+|  Loans Service   | --------------------------> |   Eureka Server   |
++------------------+                             |   (port 8070)     |
+                                                 +-------------------+
++------------------+   (2) where is Loans?              ^
+|  Accounts Service| ---------------------------------> |
+|                  | <--------------------------------- |
+|  [LoadBalancer]  |   (3) here is the address          |
++------------------+                                    |
+        |                                               |
+        | (4) direct call                               |
+        v                                               |
++------------------+        (1) register               |
+|  Loans :8090     | ---------------------------------> +
++------------------+
+```
+
+Each service also sends a **heartbeat** to Eureka every 30 seconds. If a service goes down and stops sending heartbeats, Eureka removes it from the registry automatically.
 
 ---
 
-# Project Structure
+## Eureka Server Setup
 
-Each microservice follows a layered structure:
+The Eureka Server is a dedicated Spring Boot application that acts as the service registry.
 
-```
-controller   → REST endpoints
-service      → business logic
-repository   → database access
-entity       → domain models
-dto          → request/response contracts
-exception    → centralized error handling
-```
+**Dependency** (`pom.xml`):
 
----
+```xml
 
-# Running the Project
-
-## 1. Clone the repository
+    org.springframework.cloud
+    spring-cloud-starter-netflix-eureka-server
 
 ```
-git clone https://github.com/ThembaTman0/Bankwave-V-2.0.git
-cd Bankwave-V-2.0
-```
 
----
+**Main class**:
 
-# Running Locally (Development)
-
-Start the Config Server first:
-
-```
-cd configserver
-mvn spring-boot:run
-```
-
-Then start the microservices in separate terminals.
-
-Accounts:
-
-```
-cd accounts
-mvn spring-boot:run
-```
-
-Loans:
-
-```
-cd loans
-mvn spring-boot:run
-```
-
-Cards:
-
-```
-cd cards
-mvn spring-boot:run
-```
-
----
-
-# Running the Full System with Docker
-
-Create a `.env` file in the root directory:
-
-```
-MYSQL_ROOT_PASSWORD=yourpassword
-```
-
-Start everything:
-
-```
-docker-compose up --build
-```
-
-Docker will start:
-
-* MySQL databases
-* All microservices
-* Shared network configuration
-
-Database data is stored in Docker volumes.
-
----
-
-# Testing APIs
-
-APIs can be tested using:
-
-* Postman
-* curl
-* Browser (GET requests)
-
-Example endpoint:
-
-```
-http://localhost:8080/accounts
-```
-
----
-
-# Engineering Practices
-
-While building this project the focus was on keeping the code clear and maintainable. Some practices used include:
-
-* Layered architecture
-* DTO-based API contracts
-* Centralized exception handling
-* Externalized configuration
-* Service isolation
-* Meaningful logging
-
----
-
-# Future Improvements
-
-Possible next steps for the system include:
-
-* Service discovery
-* API gateway
-* Resilience patterns
-* Observability and monitoring
-
----
-
-# Author
-
-Built and maintained by **Themba Ngobeni**.
+```java
+@Spring
